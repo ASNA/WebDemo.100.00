@@ -15,8 +15,6 @@
         <asp:TextBox ID="name" AutoFocus CssClass="form-control" ClientIDMode="Static" runat="server"></asp:TextBox>
     </div>
 
-
-
     <div class="form-group">
         <!-- Subject field -->
         <label class="control-label" for="city">City</label>

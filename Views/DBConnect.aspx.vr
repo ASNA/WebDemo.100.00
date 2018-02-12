@@ -11,14 +11,16 @@ Using System.Web.UI.HtmlControls
 
 BegClass Views_DBConnect Partial(*Yes) Access(*Public) Extends(System.Web.UI.Page)
 
-    DclDB DGDB DBName("*Public/DG Net Local") 
-            
+    DclDB DGDBCompileTime DBName("*Public/DG NET Local") 
+	
+	DclDB DGDBRuntime
+	           
     DclDiskFile  Customer +
           Type(*Update ) +
           Org(*Indexed) +
           Prefix(Customer_) +
           File("Examples/CMastNewL1") +
-          DB(DGDB) +
+          DB(DGDBCompileTime) +
           ImpOpen(*No) +  
 		  AddRec(*Yes)
 
@@ -29,21 +31,38 @@ BegClass Views_DBConnect Partial(*Yes) Access(*Public) Extends(System.Web.UI.Pag
 		DclFld CustomerName Type(*String) 
 		DclFld IsDBConnected Type(*Boolean) 
 
-		IsDBConnected = DGDB.IsOpen
-		
-		DGDB.Server = *This.IBMServer.Text	
-		DGDB.Port = *This.Port.Text
-		DGDB.User = *This.User.Text	
-		DGDB.Password = *This.Password.Text
+		IsDBConnected = DGDBRuntime.IsOpen
+	
+		If *This.Platform.SelectedValue = 'DSS'
+			ConfigureForDSS(
+			DGDBRuntime.PlatformAttribute = '*SQLOLEB'
 
-		Connect DGDB
+		ElseIf  *This.Platform.SelectedValue = 'IBMI'
+			DGDBRuntime.PlatformAttribute = '*DATALINK'
+
+		ElseIf *This.Platform.SelectedValue = 'LOCALDB'
+			DGDBRuntime.Label = 'DG NET Local'
+		EndIf
+			
+		If *This.Platform.SelectedValue = 'IBMI' OR *This.Platform.SelectedValue = 'DSS'
+			DGDBRuntime.User = *This.User.Text	
+			DGDBRuntime.Password = *This.Password.Text
+			DGDBRuntime.Port = *This.Port.Text
+			DGDBRuntime.Server = *This.DBServer.Text
+		Else 
+		EndIf
+
+		*Thid.DGDBCompileTime = *Nothing    // Not necessary, but make it clear! 
+		*This.DGDBCompiletime = DGDBRuntime
+
+		Connect DGDBRuntime
 		Open Customer 
 
 		Read Customer 
 		CustomerName = Customer_CMName
 
 		Close *All
-		Disconnect PGMDB 
+		Disconnect DGDBRuntime
 	EndSr
 
     BegSr Page_Load Access(*Private) Event(*This.Load)
