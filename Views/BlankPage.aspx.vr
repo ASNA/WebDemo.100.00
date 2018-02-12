@@ -1,0 +1,54 @@
+﻿Using System
+Using System.Data
+Using System.Configuration
+Using System.Collections
+Using System.Collections.Specialized
+Using System.Web
+Using System.Web.Security
+Using System.Web.UI
+Using System.Web.UI.WebControls
+Using System.Web.UI.WebControls.WebParts
+Using System.Web.UI.HtmlControls
+
+BegClass Views_BlankPage Partial(*Yes) Access(*Public) Extends(System.Web.UI.Page)
+
+	DclFld PostValues Type(ASNA.Web.Helpers.PostData) New(*This.ViewState) 
+
+    BegSr Page_Load Access(*Private) Event(*This.Load)
+        DclSrParm sender Type(*Object)
+        DclSrParm e Type(System.EventArgs)
+
+		DclFld Name Type(*String) 
+		DclFld City Type(*String) 
+		
+        If (NOT Page.IsPostBack)			
+			// Populates ViewState with these values from the 
+			// previous page's Post data with the given names. 
+			PostValues.CopyPostDataToViewState('name,city') 
+
+			Name = ViewState('name').ToString() 
+			City = ViewState('city').ToString() 
+            
+            // Called the first time that the page is loaded.
+            //
+        Else
+            //
+            // Called subsequent times that the page is displayed.
+            //
+        EndIf
+    EndSr
+
+    BegSr Page_Unload Access(*Private) Event(*This.Unload)
+        DclSrParm sender Type(*Object)
+        DclSrParm e Type(System.EventArgs)
+
+        //
+        // Called when the page is unloaded.
+        //
+    EndSr
+
+	//--Library functions ------------------------------------------------
+
+
+
+EndClass

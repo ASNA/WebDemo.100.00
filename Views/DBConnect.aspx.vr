@@ -1,0 +1,75 @@
+﻿Using System
+Using System.Data
+Using System.Configuration
+Using System.Collections
+Using System.Web
+Using System.Web.Security
+Using System.Web.UI
+Using System.Web.UI.WebControls
+Using System.Web.UI.WebControls.WebParts
+Using System.Web.UI.HtmlControls
+
+BegClass Views_DBConnect Partial(*Yes) Access(*Public) Extends(System.Web.UI.Page)
+
+    DclDB DGDB DBName("*Public/DG Net Local") 
+            
+    DclDiskFile  Customer +
+          Type(*Update ) +
+          Org(*Indexed) +
+          Prefix(Customer_) +
+          File("Examples/CMastNewL1") +
+          DB(DGDB) +
+          ImpOpen(*No) +  
+		  AddRec(*Yes)
+
+	BegSr submit_Click Access(*Private) Event(*This.submit.Click)
+		DclSrParm sender Type(*Object)
+		DclSrParm e Type(System.EventArgs)
+
+		DclFld CustomerName Type(*String) 
+		DclFld IsDBConnected Type(*Boolean) 
+
+		IsDBConnected = DGDB.IsOpen
+		
+		DGDB.Server = *This.IBMServer.Text	
+		DGDB.Port = *This.Port.Text
+		DGDB.User = *This.User.Text	
+		DGDB.Password = *This.Password.Text
+
+		Connect DGDB
+		Open Customer 
+
+		Read Customer 
+		CustomerName = Customer_CMName
+
+		Close *All
+		Disconnect PGMDB 
+	EndSr
+
+    BegSr Page_Load Access(*Private) Event(*This.Load)
+        DclSrParm sender Type(*Object)
+        DclSrParm e Type(System.EventArgs)
+
+        If (NOT Page.IsPostBack)
+            //
+            // Called the first time that the page is loaded.
+            //
+        Else
+            //
+            // Called subsequent times that the page is displayed.
+            //
+        EndIf
+    EndSr
+
+    BegSr Page_Unload Access(*Private) Event(*This.Unload)
+        DclSrParm sender Type(*Object)
+        DclSrParm e Type(System.EventArgs)
+
+        //
+        // Called when the page is unloaded.
+        //
+    EndSr
+
+
+
+EndClass

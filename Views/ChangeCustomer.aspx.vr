@@ -1,0 +1,205 @@
+﻿Using System
+Using System.Data
+Using System.Text
+Using System.Configuration
+Using System.Collections.Specialized
+Using System.Collections.Generic 
+Using System.Web
+Using System.Web.Security
+Using System.Web.UI
+Using System.Web.UI.WebControls
+Using System.Web.UI.WebControls.WebParts
+Using System.Web.UI.HtmlControls
+
+BegClass Views_ChangeCustomer Partial(*Yes) Access(*Public) Extends(System.Web.UI.Page)
+
+    DclDB DGDB DBName("*Public/DG Net Local") 
+
+	DclFld CustomerNumber Like(Customer_CMCustNo)
+             
+    DclDiskFile  Customer +
+          Type(*Update ) +
+          Org(*Indexed) +
+          Prefix(Customer_) +
+          File("Examples/CMastNewL1") +
+          DB(DGDB) +
+          ImpOpen(*No) +  
+		  AddRec(*Yes)
+
+    BegSr Page_Load Access(*Private) Event(*This.Load)
+        DclSrParm sender Type(*Object)
+        DclSrParm e Type(System.EventArgs)
+
+		CollectPostData()
+		CustomerNumber = GetPostDataValue('customernumber') 
+
+		OpenData() 
+						
+		If Not Page.IsPostBack
+			LoadStateList()
+			If CustomerNumber <> 0 
+				ReadRecord(CustomerNumber)
+				Submit.ToolTip = 'Update customer'
+			Else
+			Submit.ToolTip = 'Add customer'
+			EndIf 
+		Else 
+
+		EndIf 
+    EndSr
+
+    BegSr Page_Unload Access(*Private) Event(*This.Unload)
+        DclSrParm sender Type(*Object)
+        DclSrParm e Type(System.EventArgs)
+
+		CloseData()
+    EndSr
+
+	BegSr ReadRecord 
+		DclSrParm CMCustNo Like(Customer_CMCustNo) 
+
+		Chain Customer Key(CMCustNo) 
+		If (Customer.IsFound) 
+			*This.Title = 'Updating ' + CMCustNo.ToString('###') 
+			PopulateUI()
+		Else
+    		Response.Redirect(String.Format('getCustomerNumber.aspx?number={0}&action={1}',CustomerNumber.ToString(), 'not-found'))  
+		EndIf 		
+	EndSr
+
+	BegSr PopulateUI
+		Name.Text = Customer_CMName.Trim()
+		City.Text = Customer_CMCity.Trim()
+		State.SelectedValue = Customer_CMState
+		PostCode.Text = Customer_CMPostCode
+	EndSr
+
+	BegSr UpdateRecord 
+		DclSrParm CMCustNo Like(Customer_CMCustNo) 
+
+		Chain Customer Key(CMCustNo) 
+		If (Customer.IsFound) 
+			PopulateRecord() 
+			Update Customer 
+		EndIf 		
+	EndSr
+
+	BegSr AddRecord 
+		Customer_CMCustNo = GetNextCustomerNumber()
+		PopulateRecord() 
+		Write Customer 
+	EndSr
+
+	BegSr PopulateRecord
+		Customer_CMName = Name.Text
+		Customer_CMCity = City.Text
+		Customer_CMState = State.SelectedValue
+		Customer_CMPostCode = PostCode.Text
+	EndSr
+		
+    BegSr OpenData
+        Connect DGDB 
+        Open Customer 
+    EndSr  
+
+	BegSr CloseData
+		Close *All
+		Disconnect DGDB 
+	EndSr
+
+	BegFunc GetNextCustomerNumber Type(*Integer4) 
+		SetLL Customer Key(*End) 
+
+		ReadP Customer 
+
+		LeaveSr Customer_CMCustNo + 1
+	EndFunc 
+
+    BegSr LoadStateList
+        //
+        // Load the state list from either disk or a cached copy of the list.
+        //
+        DclFld sl  Type(StateList) New(DGDB)
+        DclFld lic Type(ListItemCollection)
+ 
+        lic = sl.GetList()
+
+        state.DataTextField  = "Text"
+        state.DataValueField = "Value"
+
+        state.DataSource = lic
+        state.DataBind()
+    EndSr 
+
+	BegSr CustomValidator1_ServerValidate Access(*Private) Event(*This.CustomValidator1.ServerValidate)
+		DclSrParm source Type(*Object)
+		DclSrParm args Type(System.Web.UI.WebControls.ServerValidateEventArgs)
+
+		If City.Text = 'Dallas'
+			args.IsValid = *False 
+		EndIf 		
+	EndSr
+
+	BegSr submit_Click Access(*Private) Event(*This.submit.Click)
+		DclSrParm sender Type(*Object)
+		DclSrParm e Type(System.EventArgs)
+
+		If CustomerNumber <> 0 
+			UpdateRecord(CustomerNumber) 		
+			Response.Redirect(String.Format('getCustomerNumber.aspx?number={0}&action={1}',Customer_CMCustNo.ToString(), 'updated'))  
+		Else
+			AddRecord()
+			Response.Redirect(String.Format('getCustomerNumber.aspx?number={0}&action={1}',Customer_CMCustNo.ToString(), 'added'))  
+		EndIf 
+	EndSr
+
+	BegSr cancelOperation_Click Access(*Private) Event(*This.cancelOperation.Click)
+		DclSrParm sender Type(*Object)
+		DclSrParm e Type(System.EventArgs)
+		
+		Response.Redirect(String.Format('getCustomerNumber.aspx?number={0}&action={1}',Customer_CMCustNo.ToString(), 'canceled'))  				
+	EndSr
+
+	//--Library functions ------------------------------------------------
+
+	DclFld postedValues Type(NameValueCollection) New()
+
+	BegSr CollectPostData
+		DclFld Key Type(*String) 
+		DclFld i Type(*Integer4) 
+
+		For Index(i = 0) To(Request.Form.AllKeys.Length - 1) 
+	        Key = Request.Form.AllKeys[i]
+			If (Key.Substring(0, 2) <> "__")
+				postedValues.Add(Key.ToLower(),Request.Form[i]) 
+			EndIf 
+		EndFor 
+	EndSr 
+
+	BegFunc GetPostDataValue Type(*String) 
+		DclSrParm ElementNameSuffix Type(*String) 
+
+		DclFld Key Type(*String) 
+		DclFld i Type(*Integer4) 
+		DclFld Result Type(*String) Inz(*Nothing) 
+
+		ElementNameSuffix = ElementNameSuffix.ToLower()
+
+		If ViewState[ElementNameSuffix] <> *Nothing 
+			LeaveSr ViewState[ElementNameSuffix].ToString()
+		EndIf 
+
+		For Index(i = 0) To(postedValues.AllKeys.Length - 1)
+			Key = postedValues.AllKeys[i]
+			If Key.EndsWith(ElementNameSuffix)
+				Viewstate[ElementNameSuffix] = postedValues[i] 
+				LeaveSr postedValues[i].ToString() 
+			EndIf 
+		EndFor 
+
+		Throw *New System.ArgumentException(String.Format('Element named {0} not found in postedValues', ElementNameSuffix)) 
+		LeaveSr *Nothing 
+	EndFunc 
+
+EndClass
+

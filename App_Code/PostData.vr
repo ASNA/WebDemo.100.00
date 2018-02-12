@@ -1,0 +1,135 @@
+﻿Using System
+Using System.Collections.Generic
+Using System.Collections.Specialized 
+Using System.Text.RegularExpressions
+Using System.Web
+Using System.Web.UI
+
+DclNameSpace ASNA.Web.Helpers
+
+BegClass PostData Access(*Public)
+
+	DclFld PostedValues Type(NameValueCollection) New()
+	DclFld Context Type(HttpContext) 
+	DclFld ViewState Type(System.Web.UI.StateBag) 
+
+	BegConstructor Access(*Public)
+		DclSrParm viewstate Type(System.Web.UI.StateBag) 
+
+		*This.ViewState = ViewState
+		*This.context = HTTPContext.Current
+	EndConstructor
+
+	/*
+	 | Call this method 
+	 */
+	BegSr CopyPostDataToViewState Access(*Public) 
+		DclSrParm Fields Type(*String) 
+
+		DclFld Key Type(*String) 
+		DclFld i Type(*Integer4) 
+
+		ForEach FieldName Type(*String) Collection(Regex.Split(Fields.ToLower().Trim(),'\s*,\s*'))
+			For Index(i = 0) To(context.Request.Form.AllKeys.Length - 1) 
+				Key = context.Request.Form.AllKeys[i].ToLower()
+				If (Key.EndsWith('$' + FieldName))  
+					ViewState[FieldName] = context.Request.Form[i]
+					Iterate 
+				EndIf 
+			EndFor 
+		EndFor 
+
+	EndSr 
+
+//	BegFunc GetPostDataValue Type(*String) Access(*Public) 
+//		DclSrParm ElementNameSuffix Type(*String) 
+//
+//		DclFld Key Type(*String) 
+//		DclFld i Type(*Integer4) 
+//		DclFld Result Type(*String) Inz(*Nothing) 
+//
+//		ElementNameSuffix = ElementNameSuffix.ToLower()
+//
+//		If ViewState[ElementNameSuffix] <> *Nothing 
+//			LeaveSr ViewState[ElementNameSuffix].ToString()
+//		EndIf 
+//
+//		For Index(i = 0) To(postedValues.AllKeys.Length - 1)
+//			Key = postedValues.AllKeys[i]
+//			If Key.EndsWith(ElementNameSuffix)
+//				Viewstate[ElementNameSuffix] = postedValues[i] 
+//				LeaveSr postedValues[i].ToString() 
+//			EndIf 
+//		EndFor 
+//
+//		Throw *New System.ArgumentException(String.Format('Element named {0} not found in postedValues', ElementNameSuffix)) 
+//		LeaveSr *Nothing 
+//	EndFunc 
+
+EndClass
+
+
+//Using System
+//Using System.Collections.Generic
+//Using System.Collections.Specialized 
+//Using System.Web
+//Using System.Web.UI
+//
+///// <summary>
+///// Summary description for PostData
+///// </summary>
+//BegClass PostData Access(*Public)
+//
+//	DclFld PostedValues Type(NameValueCollection) New()
+//	DclFld Context Type(HttpContext) 
+//	DclFld ViewState Type(System.Web.UI.StateBag) 
+//
+//	BegConstructor Access(*Public)
+//		DclSrParm viewstate Type(System.Web.UI.StateBag) 
+//
+//		*This.ViewState = ViewState
+//		*This.context = HTTPContext.Current
+//	EndConstructor
+//
+//	/*
+//	 | Call this method 
+//	 */
+//	BegSr CollectPostData Access(*Public) 
+//		DclFld Key Type(*String) 
+//		DclFld i Type(*Integer4) 
+//
+//		For Index(i = 0) To(context.Request.Form.AllKeys.Length - 1) 
+//	        Key = context.Request.Form.AllKeys[i]
+//			// Ignore ASP.NET plumbing POST elements. 
+//			If (Key.Substring(0, 2) <> "__")
+//				postedValues.Add(Key.ToLower(),context.Request.Form[i]) 
+//			EndIf 
+//		EndFor 
+//	EndSr 
+//
+//	BegFunc GetPostDataValue Type(*String) Access(*Public) 
+//		DclSrParm ElementNameSuffix Type(*String) 
+//
+//		DclFld Key Type(*String) 
+//		DclFld i Type(*Integer4) 
+//		DclFld Result Type(*String) Inz(*Nothing) 
+//
+//		ElementNameSuffix = ElementNameSuffix.ToLower()
+//
+//		If ViewState[ElementNameSuffix] <> *Nothing 
+//			LeaveSr ViewState[ElementNameSuffix].ToString()
+//		EndIf 
+//
+//		For Index(i = 0) To(postedValues.AllKeys.Length - 1)
+//			Key = postedValues.AllKeys[i]
+//			If Key.EndsWith(ElementNameSuffix)
+//				Viewstate[ElementNameSuffix] = postedValues[i] 
+//				LeaveSr postedValues[i].ToString() 
+//			EndIf 
+//		EndFor 
+//
+//		Throw *New System.ArgumentException(String.Format('Element named {0} not found in postedValues', ElementNameSuffix)) 
+//		LeaveSr *Nothing 
+//	EndFunc 
+//
+//EndClass
