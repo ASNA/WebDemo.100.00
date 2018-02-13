@@ -31,7 +31,7 @@ BegClass Views_ChangeCustomer Partial(*Yes) Access(*Public) Extends(System.Web.U
         DclSrParm e Type(System.EventArgs)
 
 		CollectPostData()
-		CustomerNumber = GetPostDataValue('customernumber') 
+		CustomerNumber = GetPostDataValue('formCustomerNumber') 
 
 		OpenData() 
 						
@@ -39,9 +39,9 @@ BegClass Views_ChangeCustomer Partial(*Yes) Access(*Public) Extends(System.Web.U
 			LoadStateList()
 			If CustomerNumber <> 0 
 				ReadRecord(CustomerNumber)
-				Submit.ToolTip = 'Update customer'
+				formSubmit.ToolTip = 'Update customer'
 			Else
-			Submit.ToolTip = 'Add customer'
+			formSubmit.ToolTip = 'Add customer'
 			EndIf 
 		Else 
 
@@ -68,10 +68,10 @@ BegClass Views_ChangeCustomer Partial(*Yes) Access(*Public) Extends(System.Web.U
 	EndSr
 
 	BegSr PopulateUI
-		Name.Text = Customer_CMName.Trim()
-		City.Text = Customer_CMCity.Trim()
-		State.SelectedValue = Customer_CMState
-		PostCode.Text = Customer_CMPostCode
+		formName.Text = Customer_CMName.Trim()
+		formCity.Text = Customer_CMCity.Trim()
+		formState.SelectedValue = Customer_CMState
+		formPostCode.Text = Customer_CMPostCode
 	EndSr
 
 	BegSr UpdateRecord 
@@ -91,10 +91,10 @@ BegClass Views_ChangeCustomer Partial(*Yes) Access(*Public) Extends(System.Web.U
 	EndSr
 
 	BegSr PopulateRecord
-		Customer_CMName = Name.Text
-		Customer_CMCity = City.Text
-		Customer_CMState = State.SelectedValue
-		Customer_CMPostCode = PostCode.Text
+		Customer_CMName = formName.Text
+		Customer_CMCity = formCity.Text
+		Customer_CMState = formState.SelectedValue
+		Customer_CMPostCode = formPostCode.Text
 	EndSr
 		
     BegSr OpenData
@@ -124,23 +124,23 @@ BegClass Views_ChangeCustomer Partial(*Yes) Access(*Public) Extends(System.Web.U
  
         lic = sl.GetList()
 
-        state.DataTextField  = "Text"
-        state.DataValueField = "Value"
+        formstate.DataTextField  = "Text"
+        formstate.DataValueField = "Value"
 
-        state.DataSource = lic
-        state.DataBind()
+        formstate.DataSource = lic
+        formstate.DataBind()
     EndSr 
 
 	BegSr CustomValidator1_ServerValidate Access(*Private) Event(*This.CustomValidator1.ServerValidate)
 		DclSrParm source Type(*Object)
 		DclSrParm args Type(System.Web.UI.WebControls.ServerValidateEventArgs)
 
-		If City.Text = 'Dallas'
+		If formCity.Text = 'Dallas'
 			args.IsValid = *False 
 		EndIf 		
 	EndSr
 
-	BegSr submit_Click Access(*Private) Event(*This.submit.Click)
+	BegSr submit_Click Access(*Private) Event(*This.formsubmit.Click)
 		DclSrParm sender Type(*Object)
 		DclSrParm e Type(System.EventArgs)
 
@@ -153,7 +153,7 @@ BegClass Views_ChangeCustomer Partial(*Yes) Access(*Public) Extends(System.Web.U
 		EndIf 
 	EndSr
 
-	BegSr cancelOperation_Click Access(*Private) Event(*This.cancelOperation.Click)
+	BegSr cancelOperation_Click Access(*Private) Event(*This.formcancelOperation.Click)
 		DclSrParm sender Type(*Object)
 		DclSrParm e Type(System.EventArgs)
 		

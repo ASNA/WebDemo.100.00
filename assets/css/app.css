@@ -5,6 +5,12 @@
     display: none;
 }
 
+.debug-header {
+    width: 100%;
+    background-color: #f8d7da;
+    padding: .5em;
+}
+
 .svg-button {
     font-size: 200%;
 }

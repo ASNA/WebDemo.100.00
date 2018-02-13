@@ -2,7 +2,8 @@
 
 <!DOCTYPE html>
 
-<html lang="en" >
+<html lang="en">
+
 <head runat="server">
     <title>Hello, world!</title>
     <meta charset="utf-8">
@@ -27,12 +28,13 @@
     <asp:ContentPlaceHolder id="head" runat="server">
     </asp:ContentPlaceHolder>
 </head>
+
 <body>
     <%
     If (HttpContext.Current.IsDebuggingEnabled)     
     %>
-    <div>
-        <small style="padding: 6px" class="alert-danger">Debugging is enabled</small>
+    <div class="container-fluid debug-header">
+        <small class="alert-danger">Debugging is enabled</small>
     </div>
     <%
     EndIf 

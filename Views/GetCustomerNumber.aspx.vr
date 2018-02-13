@@ -11,9 +11,13 @@ Using System.Web.UI.HtmlControls
 
 BegClass Views_GetCustomerNumber Partial(*Yes) Access(*Public) Extends(System.Web.UI.Page)
 
+	DclDb DGDB DBName('*Public/DG NET Local') 
+
     BegSr Page_Load Access(*Private) Event(*This.Load)
         DclSrParm sender Type(*Object)
         DclSrParm e Type(System.EventArgs)
+
+		Connect DGDB
 
         If (NOT Page.IsPostBack)
 			Page.Title = "Demo 1"
@@ -27,9 +31,21 @@ BegClass Views_GetCustomerNumber Partial(*Yes) Access(*Public) Extends(System.We
         EndIf
     EndSr
 
+	BegSr Page_SaveStateComplete Access(*Private) Event(*This.SaveStateComplete) 
+        DclSrParm sender Type(*Object)
+        DclSrParm e Type(System.EventArgs)
+
+		Disconnect DGDB 
+	EndSr
+
+
     BegSr Page_Unload Access(*Private) Event(*This.Unload)
         DclSrParm sender Type(*Object)
         DclSrParm e Type(System.EventArgs)
+
+		DclFld x Type(*String) 
+
+		x = 'x'
 
         //
         // Called when the page is unloaded.
@@ -42,12 +58,6 @@ BegClass Views_GetCustomerNumber Partial(*Yes) Access(*Public) Extends(System.We
 		
 		Session['customer_number'] = 0
 		Response.Redirect('index.aspx') 		
-	EndSr
-
-	BegSr Bob Access(*Private) Event(*This.addCustomer.Click)
-		DclSrParm sender Type(*Object)
-		DclSrParm e Type(System.EventArgs)
-
 	EndSr
 
 EndClass

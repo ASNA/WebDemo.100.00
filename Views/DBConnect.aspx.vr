@@ -2,6 +2,7 @@
 Using System.Data
 Using System.Configuration
 Using System.Collections
+Using System.Text
 Using System.Web
 Using System.Web.Security
 Using System.Web.UI
@@ -24,7 +25,9 @@ BegClass Views_DBConnect Partial(*Yes) Access(*Public) Extends(System.Web.UI.Pag
           ImpOpen(*No) +  
 		  AddRec(*Yes)
 
-	BegSr submit_Click Access(*Private) Event(*This.submit.Click)
+	DclProp PageStatusJavaScript Type(*String) Access(*Protected)
+	
+	BegSr submit_Click Access(*Private) Event(*This.formsubmit.Click)
 		DclSrParm sender Type(*Object)
 		DclSrParm e Type(System.EventArgs)
 
@@ -33,29 +36,28 @@ BegClass Views_DBConnect Partial(*Yes) Access(*Public) Extends(System.Web.UI.Pag
 
 		IsDBConnected = DGDBRuntime.IsOpen
 	
-		If *This.Platform.SelectedValue = 'DSS'
-			ConfigureForDSS(
-			DGDBRuntime.PlatformAttribute = '*SQLOLEB'
+		If *This.formPlatform.SelectedValue = 'IBMI'
+			ConfigureForIBMi(DGDBRuntime)
 
-		ElseIf  *This.Platform.SelectedValue = 'IBMI'
-			DGDBRuntime.PlatformAttribute = '*DATALINK'
+		ElseIf *This.formPlatform.SelectedValue = 'DSS'
+			ConfigureForDSS(DGDBRuntime) 
 
-		ElseIf *This.Platform.SelectedValue = 'LOCALDB'
-			DGDBRuntime.Label = 'DG NET Local'
+		Else
+			ConfigureForLocalDB(DGDBRuntime) 
 		EndIf
 			
-		If *This.Platform.SelectedValue = 'IBMI' OR *This.Platform.SelectedValue = 'DSS'
-			DGDBRuntime.User = *This.User.Text	
-			DGDBRuntime.Password = *This.Password.Text
-			DGDBRuntime.Port = *This.Port.Text
-			DGDBRuntime.Server = *This.DBServer.Text
-		Else 
-		EndIf
-
-		*Thid.DGDBCompileTime = *Nothing    // Not necessary, but make it clear! 
+		*This.DGDBCompileTime = *Nothing    // Not necessary, but make it clear! 
 		*This.DGDBCompiletime = DGDBRuntime
 
-		Connect DGDBRuntime
+		Try 
+			Connect DGDBRuntime
+		Catch ex Type(ASNA.DataGate.Common.dgException)
+			MessageText.Text = 'Error connecting: ' + ex.Message 
+			MessagePanel.CssClass = "alert alert-danger"
+			MessagePanel.Visible = *True
+			LeaveSR 
+		EndTry 
+
 		Open Customer 
 
 		Read Customer 
@@ -63,11 +65,57 @@ BegClass Views_DBConnect Partial(*Yes) Access(*Public) Extends(System.Web.UI.Pag
 
 		Close *All
 		Disconnect DGDBRuntime
+		MessageText.Text = 'Connected successfully'
+		MessagePanel.CssClass = "alert alert-success"
+		MessagePanel.Visible = *True
+	EndSr
+
+	BegFunc CreatePageStatus Type(*String) 
+		DclSrParm Body Type(*String) 
+
+		DclFld sb Type(StringBuilder) New(1024)
+		sb.Append('<script>')
+		sb.Append('function pageStatus() {')
+		sb.Append(Body)
+		sb.Append('}')
+		sb.Append('</script>')
+
+		LeaveSr sb.ToString()
+	EndFunc
+
+	BegSr ConfigureForIBMi
+		DclSrParm DGDB Type(ASNA.VisualRPG.Runtime.Database) 
+
+		DGDBRuntime.PlatformAttribute = '*DATALINK'
+		DGDBRuntime.User = *This.formUser.Text	
+		DGDBRuntime.Password = *This.formPassword.Text
+		DGDBRuntime.Port = *This.formPort.Text
+		DGDBRuntime.Server = *This.formServer.Text
+	EndSr
+
+	BegSr ConfigureForDSS
+		DclSrParm DGDB Type(ASNA.VisualRPG.Runtime.Database) 
+
+		DGDBRuntime.PlatformAttribute = '*SQLOLEB'
+		DGDBRuntime.User = *This.formUser.Text	
+		DGDBRuntime.Password = *This.formPassword.Text
+		DGDBRuntime.Port = *This.formPort.Text
+		DGDBRuntime.Server = *This.formServer.Text
+	EndSr
+
+	BegSr ConfigureForLocalDB
+		DclSrParm DGDB Type(ASNA.VisualRPG.Runtime.Database) 
+
+		DGDBRuntime.User = '*DOMAIN'
+		DGDBRuntime.Server = '*LOCAL'
+		DGDBRuntime.Label = 'DG NET Local'
 	EndSr
 
     BegSr Page_Load Access(*Private) Event(*This.Load)
         DclSrParm sender Type(*Object)
         DclSrParm e Type(System.EventArgs)
+
+		Page.Title = 'DB connection'
 
         If (NOT Page.IsPostBack)
             //

@@ -14,8 +14,8 @@
     <div id="flash-message"></div>
     <div class="form-group" style="margin-top: 40px;">
         <!-- Name field -->
-        <label class="control-label" for="name">Customer Number</label>
-        <asp:TextBox ID="customerNumber" AutoFocus CssClass="form-control" ClientIDMode="Static" runat="server"></asp:TextBox>
+        <label class="control-label" for="formCustomerNumber">Customer Number</label>
+        <asp:TextBox ID="formCustomerNumber" AutoFocus CssClass="form-control" ClientIDMode="Static" runat="server"></asp:TextBox>
     </div>
       
     <div class="form-group">
