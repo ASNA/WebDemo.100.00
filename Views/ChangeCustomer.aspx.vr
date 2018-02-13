@@ -170,46 +170,5 @@ BegClass Views_ChangeCustomer Partial(*Yes) Access(*Public) Extends(System.Web.U
 		Response.Redirect(String.Format('getCustomerNumber.aspx?number={0}&action={1}',Customer_CMCustNo.ToString(), 'canceled'))  				
 	EndSr
 
-	//--Library functions ------------------------------------------------
-
-//	DclFld postedValues Type(NameValueCollection) New()
-//
-//	BegSr CollectPostData
-//		DclFld Key Type(*String) 
-//		DclFld i Type(*Integer4) 
-//
-//		For Index(i = 0) To(Request.Form.AllKeys.Length - 1) 
-//	        Key = Request.Form.AllKeys[i]
-//			If (Key.Substring(0, 2) <> "__")
-//				postedValues.Add(Key.ToLower(),Request.Form[i]) 
-//			EndIf 
-//		EndFor 
-//	EndSr 
-//
-//	BegFunc GetPostDataValue Type(*String) 
-//		DclSrParm ElementNameSuffix Type(*String) 
-//
-//		DclFld Key Type(*String) 
-//		DclFld i Type(*Integer4) 
-//		DclFld Result Type(*String) Inz(*Nothing) 
-//
-//		ElementNameSuffix = ElementNameSuffix.ToLower()
-//
-//		If ViewState[ElementNameSuffix] <> *Nothing 
-//			LeaveSr ViewState[ElementNameSuffix].ToString()
-//		EndIf 
-//
-//		For Index(i = 0) To(postedValues.AllKeys.Length - 1)
-//			Key = postedValues.AllKeys[i]
-//			If Key.EndsWith(ElementNameSuffix)
-//				Viewstate[ElementNameSuffix] = postedValues[i] 
-//				LeaveSr postedValues[i].ToString() 
-//			EndIf 
-//		EndFor 
-//
-//		Throw *New System.ArgumentException(String.Format('Element named {0} not found in postedValues', ElementNameSuffix)) 
-//		LeaveSr *Nothing 
-//	EndFunc 
-
 EndClass
 

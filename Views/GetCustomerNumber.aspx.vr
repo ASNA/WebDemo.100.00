@@ -11,13 +11,9 @@ Using System.Web.UI.HtmlControls
 
 BegClass Views_GetCustomerNumber Partial(*Yes) Access(*Public) Extends(System.Web.UI.Page)
 
-	DclDb DGDB DBName('*Public/DG NET Local') 
-
     BegSr Page_Load Access(*Private) Event(*This.Load)
         DclSrParm sender Type(*Object)
         DclSrParm e Type(System.EventArgs)
-
-		Connect DGDB
 
         If (NOT Page.IsPostBack)
 			Page.Title = "Demo 1"
@@ -35,7 +31,6 @@ BegClass Views_GetCustomerNumber Partial(*Yes) Access(*Public) Extends(System.We
         DclSrParm sender Type(*Object)
         DclSrParm e Type(System.EventArgs)
 
-		Disconnect DGDB 
     EndSr
 
 	BegSr addCustomer_Click Access(*Private) Event(*This.addCustomer.Click)
@@ -46,6 +41,9 @@ BegClass Views_GetCustomerNumber Partial(*Yes) Access(*Public) Extends(System.We
 		Response.Redirect('ChangeCustomer.aspx') 		
 	EndSr
 
+	/*
+	 | Note: This routine never gets called! 
+	 */
 	BegSr submit_Click Access(*Private) Event(*This.submit.Click)
 		DclSrParm sender Type(*Object)
 		DclSrParm e Type(System.EventArgs)
