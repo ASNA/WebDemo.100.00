@@ -25,8 +25,6 @@ BegClass Views_DBConnect Partial(*Yes) Access(*Public) Extends(System.Web.UI.Pag
           ImpOpen(*No) +  
 		  AddRec(*Yes)
 
-	DclProp PageStatusJavaScript Type(*String) Access(*Protected)
-	
 	BegSr submit_Click Access(*Private) Event(*This.formsubmit.Click)
 		DclSrParm sender Type(*Object)
 		DclSrParm e Type(System.EventArgs)
@@ -46,8 +44,9 @@ BegClass Views_DBConnect Partial(*Yes) Access(*Public) Extends(System.Web.UI.Pag
 			ConfigureForLocalDB(DGDBRuntime) 
 		EndIf
 			
+		// To make clear the distinction between a design-time and a run-time DB connection;
 		*This.DGDBCompileTime = *Nothing    // Not necessary, but make it clear! 
-		*This.DGDBCompiletime = DGDBRuntime
+		*This.DGDBCompiletime = DGDBRuntime // We using a DB connection created on the fly! 
 
 		Try 
 			Connect DGDBRuntime
@@ -69,19 +68,6 @@ BegClass Views_DBConnect Partial(*Yes) Access(*Public) Extends(System.Web.UI.Pag
 		MessagePanel.CssClass = "alert alert-success"
 		MessagePanel.Visible = *True
 	EndSr
-
-	BegFunc CreatePageStatus Type(*String) 
-		DclSrParm Body Type(*String) 
-
-		DclFld sb Type(StringBuilder) New(1024)
-		sb.Append('<script>')
-		sb.Append('function pageStatus() {')
-		sb.Append(Body)
-		sb.Append('}')
-		sb.Append('</script>')
-
-		LeaveSr sb.ToString()
-	EndFunc
 
 	BegSr ConfigureForIBMi
 		DclSrParm DGDB Type(ASNA.VisualRPG.Runtime.Database) 
@@ -136,7 +122,6 @@ BegClass Views_DBConnect Partial(*Yes) Access(*Public) Extends(System.Web.UI.Pag
         // Called when the page is unloaded.
         //
     EndSr
-
 
 
 EndClass
