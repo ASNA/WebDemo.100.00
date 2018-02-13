@@ -14,8 +14,9 @@ Using System.Web.UI.HtmlControls
 BegClass Views_ChangeCustomer Partial(*Yes) Access(*Public) Extends(System.Web.UI.Page)
 
     DclDB DGDB DBName("*Public/DG Net Local") 
-
 	DclFld CustomerNumber Like(Customer_CMCustNo)
+
+	DclFld PostValues Type(ASNA.Web.Helpers.PostData) New(*This.ViewState) 
              
     DclDiskFile  Customer +
           Type(*Update ) +
@@ -30,8 +31,17 @@ BegClass Views_ChangeCustomer Partial(*Yes) Access(*Public) Extends(System.Web.U
         DclSrParm sender Type(*Object)
         DclSrParm e Type(System.EventArgs)
 
-		CollectPostData()
-		CustomerNumber = GetPostDataValue('formCustomerNumber') 
+		PostValues.CopyPostDataToViewState('formcustomernumber') 
+
+		If ViewState['formcustomernumber'] = *Nothing
+			CustomerNumber = Session['formcustomernumber'].ToString()
+		Else
+			CustomerNumber = ViewState['formcustomernumber'].ToString()			
+		EndIf
+				
+
+//		CollectPostData()
+//		CustomerNumber = GetPostDataValue('formCustomerNumber') 
 
 		OpenData() 
 						
@@ -162,44 +172,44 @@ BegClass Views_ChangeCustomer Partial(*Yes) Access(*Public) Extends(System.Web.U
 
 	//--Library functions ------------------------------------------------
 
-	DclFld postedValues Type(NameValueCollection) New()
-
-	BegSr CollectPostData
-		DclFld Key Type(*String) 
-		DclFld i Type(*Integer4) 
-
-		For Index(i = 0) To(Request.Form.AllKeys.Length - 1) 
-	        Key = Request.Form.AllKeys[i]
-			If (Key.Substring(0, 2) <> "__")
-				postedValues.Add(Key.ToLower(),Request.Form[i]) 
-			EndIf 
-		EndFor 
-	EndSr 
-
-	BegFunc GetPostDataValue Type(*String) 
-		DclSrParm ElementNameSuffix Type(*String) 
-
-		DclFld Key Type(*String) 
-		DclFld i Type(*Integer4) 
-		DclFld Result Type(*String) Inz(*Nothing) 
-
-		ElementNameSuffix = ElementNameSuffix.ToLower()
-
-		If ViewState[ElementNameSuffix] <> *Nothing 
-			LeaveSr ViewState[ElementNameSuffix].ToString()
-		EndIf 
-
-		For Index(i = 0) To(postedValues.AllKeys.Length - 1)
-			Key = postedValues.AllKeys[i]
-			If Key.EndsWith(ElementNameSuffix)
-				Viewstate[ElementNameSuffix] = postedValues[i] 
-				LeaveSr postedValues[i].ToString() 
-			EndIf 
-		EndFor 
-
-		Throw *New System.ArgumentException(String.Format('Element named {0} not found in postedValues', ElementNameSuffix)) 
-		LeaveSr *Nothing 
-	EndFunc 
+//	DclFld postedValues Type(NameValueCollection) New()
+//
+//	BegSr CollectPostData
+//		DclFld Key Type(*String) 
+//		DclFld i Type(*Integer4) 
+//
+//		For Index(i = 0) To(Request.Form.AllKeys.Length - 1) 
+//	        Key = Request.Form.AllKeys[i]
+//			If (Key.Substring(0, 2) <> "__")
+//				postedValues.Add(Key.ToLower(),Request.Form[i]) 
+//			EndIf 
+//		EndFor 
+//	EndSr 
+//
+//	BegFunc GetPostDataValue Type(*String) 
+//		DclSrParm ElementNameSuffix Type(*String) 
+//
+//		DclFld Key Type(*String) 
+//		DclFld i Type(*Integer4) 
+//		DclFld Result Type(*String) Inz(*Nothing) 
+//
+//		ElementNameSuffix = ElementNameSuffix.ToLower()
+//
+//		If ViewState[ElementNameSuffix] <> *Nothing 
+//			LeaveSr ViewState[ElementNameSuffix].ToString()
+//		EndIf 
+//
+//		For Index(i = 0) To(postedValues.AllKeys.Length - 1)
+//			Key = postedValues.AllKeys[i]
+//			If Key.EndsWith(ElementNameSuffix)
+//				Viewstate[ElementNameSuffix] = postedValues[i] 
+//				LeaveSr postedValues[i].ToString() 
+//			EndIf 
+//		EndFor 
+//
+//		Throw *New System.ArgumentException(String.Format('Element named {0} not found in postedValues', ElementNameSuffix)) 
+//		LeaveSr *Nothing 
+//	EndFunc 
 
 EndClass
 

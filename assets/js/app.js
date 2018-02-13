@@ -56,7 +56,7 @@ rp.Lib.documentReady(() => {
         action = action.replace('-', ' ');
 
         if (action === 'canceled') {
-            messageElement.innerHTML = `Last operation was canceled`;
+            messageElement.innerHTML = 'Last operation was canceled';
         }
         else {
             messageElement.innerHTML = `Customer number ${customerNumber} was ${action}`;

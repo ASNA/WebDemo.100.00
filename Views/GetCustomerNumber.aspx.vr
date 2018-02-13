@@ -35,7 +35,6 @@ BegClass Views_GetCustomerNumber Partial(*Yes) Access(*Public) Extends(System.We
         DclSrParm sender Type(*Object)
         DclSrParm e Type(System.EventArgs)
 
-		Disconnect DGDB 
 	EndSr
 
 
@@ -43,21 +42,22 @@ BegClass Views_GetCustomerNumber Partial(*Yes) Access(*Public) Extends(System.We
         DclSrParm sender Type(*Object)
         DclSrParm e Type(System.EventArgs)
 
-		DclFld x Type(*String) 
-
-		x = 'x'
-
-        //
-        // Called when the page is unloaded.
-        //
+		Disconnect DGDB 
     EndSr
 
 	BegSr addCustomer_Click Access(*Private) Event(*This.addCustomer.Click)
 		DclSrParm sender Type(*Object)
 		DclSrParm e Type(System.EventArgs)
 		
-		Session['customer_number'] = 0
-		Response.Redirect('index.aspx') 		
+		Session['formcustomernumber'] = 0
+		Response.Redirect('ChangeCustomer.aspx') 		
 	EndSr
 
+	BegSr submit_Click Access(*Private) Event(*This.submit.Click)
+		DclSrParm sender Type(*Object)
+		DclSrParm e Type(System.EventArgs)
+
+		Session['formcustomernumber'] = formCustomerNumber.Text
+		Response.Redirect('ChangeCustomer.aspx') 				
+	EndSr
 EndClass

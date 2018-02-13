@@ -20,7 +20,7 @@
       
     <div class="form-group">
         <div class="button-group">
-            <asp:Button cssClass="btn btn-primary" ID="submit" runat="server" Text="Select" PostBackUrl="/views/ChangeCustomer.aspx" />&nbsp;
+            <asp:Button cssClass="btn btn-primary" ID="submit" runat="server" PostBackUrl="/views/ChangeCustomer.aspx" Text="Select"  />
             <asp:LinkButton ID="addCustomer" runat="server" title="Add customer"><i class="fas fa-plus-circle svg-button"></i></asp:LinkButton>
         </div>            
     </div>
