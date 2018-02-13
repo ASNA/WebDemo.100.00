@@ -31,13 +31,6 @@ BegClass Views_GetCustomerNumber Partial(*Yes) Access(*Public) Extends(System.We
         EndIf
     EndSr
 
-	BegSr Page_SaveStateComplete Access(*Private) Event(*This.SaveStateComplete) 
-        DclSrParm sender Type(*Object)
-        DclSrParm e Type(System.EventArgs)
-
-	EndSr
-
-
     BegSr Page_Unload Access(*Private) Event(*This.Unload)
         DclSrParm sender Type(*Object)
         DclSrParm e Type(System.EventArgs)
